@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ricky Zone - Koreksi Foto Modern</title>
+  <style>
+    :root{
+      --bg: #0f172a;
+      --panel: #1e293b;
+      --accent: #38bdf8;
+      --accent-2: #f43f5e;
+      --muted: #94a3b8;
+      --text: #f8fafc;
+      --radius: 12px;
+      --max-width: 900px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding-bottom: 40px;
+    }
+
+    header {
+      width: 100%;
+      padding: 18px 6%;
+      background-color: var(--panel);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .logo {
+      font-size: 1.6rem;
+      font-weight: bold;
+      color: var(--accent);
+    }
+
+    .logo span {
+      color: var(--accent-2);
+    }
+
+    main {
+      width: 90%;
+      max-width: var(--max-width);
+      margin: 32px 0;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+
+    p.subtitle {
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    .upload-section {
+      border: 2px dashed var(--accent);
+      border-radius: var(--radius);
+      padding: 30px;
+      background-color: var(--panel);
+      cursor: pointer;
+      transition: background-color 0.18s ease, transform 0.12s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      flex-direction: column;
+      user-select: none;
+      outline: none;
+    }
+
+    .upload-section:focus {
+      box-shadow: 0 0 0 4px rgba(56,189,248,0.12);
+    }
+
+    .upload-section.dragover {
+      background-color: #263449;
+      transform: translateY(-2px);
+    }
+
+    .upload-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn-upload {
+      background-color: var(--accent);
+      color: #0b1220;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-block;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .preview-container {
+      margin-top: 20px;
+      display: none;
+      text-align: center;
+    }
+
+    .preview-area {
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .preview-image, .canvas-wrapper {
+      max-width: 100%;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #0b1220;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    }
+
+    .preview-image img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+
+    .controls {
+      margin-top: 16px;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 140px;
+    }
+
+    label {
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+      color: #cbd5e1;
+    }
+
+    input[type="range"]{
+      width: 160px;
+    }
+
+    .actions {
+      margin-top: 12px;
+      display:flex;
+      gap:10px;
+      justify-content:center;
+      flex-wrap:wrap;
+    }
+
+    .btn {
+      background-color: transparent;
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .btn.primary {
+      background-color: var(--accent);
+      color: #071023;
+      border: none;
+    }
+
+    .msg {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .error {
+      color: #ffb4b4;
+    }
+
+    @media (max-width: 640px){
+      h1 { font-size: 1.6rem; }
+      .control-group { min-width: 120px; }
+      input[type="range"]{ width: 120px; }
+      .upload-section { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">Ricky <span>Zone</span></div>
+  </header>
+
+  <main>
+    <h1>Koreksi & Edit Foto Kamu</h1>
+    <p class="subtitle">Unggah fotomu dan sesuaikan pencahayaan serta warna dengan mudah.</p>
+
+    <div id="uploadSection" class="upload-section" role="button" tabindex="0" aria-label="Area unggah foto. Tekan Enter atau klik untuk memilih file, atau seret file ke sini.">
+      <div class="upload-row">
+        <div>📁 Klik atau tarik foto kamu ke sini</div>
+        <div class="btn-upload" id="openFileBtn">Pilih Foto</div>
+      </div>
+      <div class="msg" id="uploadHint">Maks ukuran file 5 MB. Format: JPG, PNG, WebP.</div>
+      <input type="file" id="fileInput" accept="image/*" aria-hidden="true">
+    </div>
+
+    <div class="preview-container" id="previewContainer" aria-live="polite">
+      <h3>Hasil Koreksi Foto</h3>
+
+      <div class="preview-area">
+        <div class="preview-image" id="previewImageWrapper" aria-hidden="false">
+          <img id="imagePreview" src="#" alt="Preview Foto" />
+        </div>
+      </div>
+
+      <div class="controls" aria-hidden="false">
+        <div class="control-group">
+          <label for="brightness">Kecerahan</label>
+          <input type="range" id="brightness" min="0" max="200" value="100" oninput="applyFilters()" aria-label="Kecerahan">
+        </div>
+        <div class="control-group">
+          <label for="contrast">Kontras</label>
+          <input type="range" id="contrast" min="0" max="200" value="100" oninput="applyFilters()" aria-label="Kontras">
+        </div>
+        <div class="control-group">
+          <label for="saturate">Saturasi</label>
+          <input type="range" id="saturate" min="0" max="200" value="100" oninput="applyFilters()" aria-label="Saturasi">
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn" id="resetBtn" onclick="resetAll()">Reset</button>
+        <button class="btn primary" id="downloadBtn" onclick="downloadImage()">Download Hasil</button>
+      </div>
+
+      <div class="msg" id="statusMsg" aria-live="polite"></div>
+    </div>
+  </main>
+
+  <script>
+    // Elements
+    const uploadSection = document.getElementById('uploadSection');
+    const openFileBtn = document.getElementById('openFileBtn');
+    const fileInput = document.getElementById('fileInput');
+    const imagePreview = document.getElementById('imagePreview');
+    const previewContainer = document.getElementById('previewContainer');
+    const statusMsg = document.getElementById('statusMsg');
+    const uploadHint = document.getElementById('uploadHint');
+
+    const brightnessEl = document.getElementById('brightness');
+    const contrastEl = document.getElementById('contrast');
+    const saturateEl = document.getElementById('saturate');
+
+    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
+    let currentFile = null;
+
+    // open file dialog
+    openFileBtn.addEventListener('click', () => fileInput.click());
+    uploadSection.addEventListener('click', () => fileInput.click());
+
+    // keyboard accessibility: Enter/Space triggers file dialog
+    uploadSection.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        fileInput.click();
+      }
+    });
+
+    // Drag and drop
+    ['dragenter', 'dragover'].forEach(evt => {
+      uploadSection.addEventListener(evt, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        uploadSection.classList.add('dragover');
+      });
+    });
+    ['dragleave', 'drop'].forEach(evt => {
+      uploadSection.addEventListener(evt, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        uploadSection.classList.remove('dragover');
+      });
+    });
+    uploadSection.addEventListener('drop', (e) => {
+      const dt = e.dataTransfer;
+      if (dt && dt.files && dt.files[0]) {
+        handleFile(dt.files[0]);
+      }
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files && e.target.files[0]) {
+        handleFile(e.target.files[0]);
+      }
+    });
+
+    function handleFile(file) {
+      statusMsg.textContent = '';
+      if (!file.type.startsWith('image/')) {
+        statusMsg.textContent = 'Tipe file tidak didukung. Harap unggah file gambar.';
+        statusMsg.className = 'msg error';
+        return;
+      }
+      if (file.size > MAX_FILE_SIZE) {
+        statusMsg.textContent = `Ukuran file terlalu besar (${(file.size/1024/1024).toFixed(2)} MB). Maks 5 MB.`;
+        statusMsg.className = 'msg error';
+        return;
+      }
+
+      currentFile = file;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        imagePreview.src = e.target.result;
+        imagePreview.alt = `Preview ${file.name}`;
+        // ensure image has loaded before showing preview & enabling download
+        imagePreview.onload = function() {
+          previewContainer.style.display = 'block';
+          statusMsg.textContent = `${file.name} — ${Math.round(file.size/1024)} KB`;
+          statusMsg.className = 'msg';
+          applyFilters();
+        };
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function getFilterString() {
+      const b = brightnessEl.value;
+      const c = contrastEl.value;
+      const s = saturateEl.value;
+      return `brightness(${b}%) contrast(${c}%) saturate(${s}%)`;
+    }
+
+    function applyFilters() {
+      const filter = getFilterString();
+      imagePreview.style.filter = filter;
+    }
+
+    function resetAll() {
+      brightnessEl.value = 100;
+      contrastEl.value = 100;
+      saturateEl.value = 100;
+      imagePreview.style.filter = '';
+      statusMsg.textContent = 'Pengaturan dikembalikan.';
+      statusMsg.className = 'msg';
+      // optionally clear file selection:
+      // fileInput.value = '';
+      // previewContainer.style.display = 'none';
+    }
+
+    // Download by drawing image to canvas with same filters applied
+    async function downloadImage() {
+      if (!currentFile) {
+        statusMsg.textContent = 'Tidak ada gambar untuk diunduh.';
+        statusMsg.className = 'msg error';
+        return;
+      }
+
+      // Create canvas sized to the image's natural size for full resolution export
+      const img = imagePreview;
+      const width = img.naturalWidth || img.width;
+      const height = img.naturalHeight || img.height;
+      if (!width || !height) {
+        statusMsg.textContent = 'Gagal mendapatkan ukuran gambar. Coba muat ulang halaman atau gunakan file lain.';
+        statusMsg.className = 'msg error';
+        return;
+      }
+
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+
+      // apply CSS-like filters via canvas context.filter
+      // Note: browser support for context.filter is modern; fallback draws without filters.
+      const filter = getFilterString();
+      try {
+        ctx.filter = filter;
+      } catch (e) {
+        // If context.filter isn't supported, ignore and continue without filters
+        console.warn('context.filter not supported, downloading without applied CSS filters', e);
+      }
+
+      // draw image into canvas
+      // Important: ensure image is fully loaded and uses natural size:
+      ctx.drawImage(img, 0, 0, width, height);
+
+      // create data URL and download
+      canvas.toBlob(function(blob) {
+        if (!blob) {
+          statusMsg.textContent = 'Gagal membuat file unduhan.';
+          statusMsg.className = 'msg error';
+          return;
+        }
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        const baseName = currentFile.name.replace(/\.[^/.]+$/, "");
+        a.href = url;
+        a.download = `${baseName}-edited.png`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+        statusMsg.textContent = 'Hasil terunduh.';
+        statusMsg.className = 'msg';
+      }, 'image/png');
+    }
+
+    // Small enhancement: keyboard arrow adjustments for sliders (native works, but ensure focus outline)
+    // Further enhancements could add auto-enhance, crop/rotate, EXIF orientation handling, progressive resize before upload, etc.
+
+  </script>
+
+</body>
+</html>
